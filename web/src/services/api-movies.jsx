@@ -1,8 +1,9 @@
 // login
 
 const getMoviesFromApi = () => {
-  console.log('Se están pidiendo las películas de la app');
+  console.log("Se están pidiendo las películas de la app");
   // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
+<<<<<<< HEAD
   return fetch('')
     .then(response => response.json())
     .then(() => {
@@ -26,11 +27,17 @@ const getMoviesFromApi = () => {
           }
         ]
       };
+=======
+  return fetch("//localhost:4000/movies")
+    .then((response) => response.json())
+    .then((data) => {
+      return data;
+>>>>>>> b9625cf712c7ff872e4845e282d18b07d4c7ab06
     });
 };
 
 const objToExport = {
-  getMoviesFromApi: getMoviesFromApi
+  getMoviesFromApi: getMoviesFromApi,
 };
 
 export default objToExport;
