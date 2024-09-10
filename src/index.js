@@ -1,13 +1,31 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql2/promise");
 
-// create and config server
+// Create and config server
 const server = express();
 server.use(cors());
 server.use(express.json());
 
-//Creamos un GET para el fetch
-server.get("/movies", (req, res) => {
+async function getDBConnection() {
+  const connection = await mysql.createConnection({
+    // configuro la conexión
+    host: "localhost",
+    user: "root",
+    password: "Ariadna18",
+    database: "netflix",
+  });
+  connection.connect(); // conecto
+  return connection;
+}
+
+// Creamos un GET para el fetch
+server.get("/movies", async (req, res) => {
+  const connection = await getDBConnection();
+  const sqlQuery = "SELECT * FROM netflix";
+
+  connection.end();
+
   const fakeMovies = [
     {
       id: 1,
@@ -29,7 +47,18 @@ server.get("/movies", (req, res) => {
       year: 2010,
       director: "Christopher Nolan",
     },
+    {
+      id: 3,
+      title: "Padre no hay más que uno 4",
+      genre: "Comedia",
+      image:
+        "https://m.media-amazon.com/images/S/pv-target-images/e826ebbcc692b4d19059d24125cf23699067ab621c979612fd0ca11ab42a65cb._SX1080_FMjpg_.jpg",
+      category: "Thriller",
+      year: 2024,
+      director: "Christopher Nolan",
+    },
   ];
+
   res.json({
     success: true,
     movies: fakeMovies,
@@ -41,3 +70,7 @@ const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+
+// Para crear un servidor estático
+const staticServerPath = "./src/public-react";
+server.use(express.static(staticServerPath));
