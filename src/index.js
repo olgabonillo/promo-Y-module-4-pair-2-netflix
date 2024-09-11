@@ -12,19 +12,26 @@ async function getDBConnection() {
     // configuro la conexión
     host: "localhost",
     user: "root",
-    password: "Ariadna18",
+    password: "admin",
     database: "netflix",
   });
   connection.connect(); // conecto
   return connection;
 }
 
-// Creamos un GET para el fetch
-server.get("/movies", async (req, res) => {
-  const connection = await getDBConnection();
-  const sqlQuery = "SELECT * FROM netflix";
+///endpoint para filtrar movies por genero.
 
+server.get("/movies", async (req, res) => {
+  const sql = 'SELECT * FROM movies WHERE genre = ?';
+  const [genreResult] = await connection.query(sql, [req.query.genre]);
+  console.log(genreResult)
   connection.end();
+
+  res.json({
+    status: "success",
+    result: genreResult,
+  });
+
 
   const fakeMovies = [
     {
