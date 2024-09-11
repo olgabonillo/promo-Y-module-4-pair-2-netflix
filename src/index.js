@@ -19,19 +19,30 @@ async function getDBConnection() {
   return connection;
 }
 
-///endpoint para filtrar movies por genero.
-
+// Creamos un GET para el fetch
 server.get("/movies", async (req, res) => {
+  const connection = await getDBConnection();
   const sql = 'SELECT * FROM movies WHERE genre = ?';
-  const [genreResult] = await connection.query(sql, [req.query.genre]);
-  console.log(genreResult)
+    const [genreResult] = await connection.query(sql, [req.query.genre]);
+    console.log(genreResult)
+    connection.end();
+    
+    res.json({
+      status: "success",
+      result: genreResult,
+    });
+
   connection.end();
 
-  res.json({
-    status: "success",
-    result: genreResult,
-  });
+////endpoint para filtrar movies por genero.
 
+  // server.get("/api/movies", async (req, res) => {
+  //   const connection = await getConnection();
+  //   console.log(req.query.genre);
+
+    
+   
+  // });
 
   const fakeMovies = [
     {
