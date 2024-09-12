@@ -6,13 +6,14 @@ const mysql = require("mysql2/promise");
 const server = express();
 server.use(cors());
 server.use(express.json());
+server.set("view engine", "ejs");
 
 async function getDBConnection() {
   const connection = await mysql.createConnection({
     // configuro la conexión
     host: "localhost",
     user: "root",
-    password: "admin",
+    password: "Ariadna18",
     database: "netflix",
   });
   connection.connect(); // conecto
@@ -22,65 +23,27 @@ async function getDBConnection() {
 // Creamos un GET para el fetch
 server.get("/movies", async (req, res) => {
   const connection = await getDBConnection();
-  const sql = 'SELECT * FROM movies WHERE genre = ?';
-    const [genreResult] = await connection.query(sql, [req.query.genre]);
-    console.log(genreResult)
-    connection.end();
-    
-    res.json({
-      status: "success",
-      result: genreResult,
-    });
-
+  const sql = "SELECT * FROM movies WHERE genre = ?";
+  const [genreResult] = await connection.query(sql, [req.query.genre]);
+  console.log(genreResult);
   connection.end();
 
-////endpoint para filtrar movies por genero.
+  res.json({
+    status: "success",
+    result: genreResult,
+  });
 
-  // server.get("/api/movies", async (req, res) => {
-  //   const connection = await getConnection();
-  //   console.log(req.query.genre);
+  connection.end();
+});
 
-    
-   
-  // });
-
-  // const fakeMovies = [
-  //   {
-  //     id: 1,
-  //     title: "Wonder Woman",
-  //     genre: "Action",
-  //     image:
-  //       "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/12/gal-gadot-como-wonder-woman-universo-extendido-dc-2895594.jpg?tf=3840x",
-  //     category: "Superhero",
-  //     year: 2017,
-  //     director: "Patty Jenkins",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Inception",
-  //     genre: "Science Fiction",
-  //     image:
-  //       "https://m.media-amazon.com/images/S/pv-target-images/e826ebbcc692b4d19059d24125cf23699067ab621c979612fd0ca11ab42a65cb._SX1080_FMjpg_.jpg",
-  //     category: "Thriller",
-  //     year: 2010,
-  //     director: "Christopher Nolan",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Padre no hay más que uno 4",
-  //     genre: "Comedia",
-  //     image:
-  //       "https://m.media-amazon.com/images/S/pv-target-images/e826ebbcc692b4d19059d24125cf23699067ab621c979612fd0ca11ab42a65cb._SX1080_FMjpg_.jpg",
-  //     category: "Thriller",
-  //     year: 2024,
-  //     director: "Christopher Nolan",
-  //   },
-  // ];
-
-  // res.json({
-  //   success: true,
-  // //   movies: fakeMovies,
-  // });
+// Endpoint para el motor de plantillas
+server.get("/movie/:movieId", async (req, res) => {
+  const connection = await getDBConnection();
+  const id = req.params.movieId;
+  const sqlQuery = "SELECT * FROM movies WHERE idMovies = ?";
+  const [result] = await connection.query(sqlQuery, [id]);
+  connection.end();
+  res.render("movie", {result: result[0]});
 });
 
 // init express aplication
@@ -92,3 +55,7 @@ server.listen(serverPort, () => {
 // Para crear un servidor estático
 const staticServerPath = "./src/public-react";
 server.use(express.static(staticServerPath));
+
+// Servidor estático para el CSS
+const staticServerCss = "./src/public-css";
+server.use(express.static(staticServerCss));
