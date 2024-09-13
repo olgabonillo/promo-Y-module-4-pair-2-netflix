@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const bcrypt = require ("bcrypt");
+const jwt = require ("jsonwebtoken");
 
 // Create and config server
 const server = express();
@@ -13,7 +15,7 @@ async function getDBConnection() {
     // configuro la conexión
     host: "localhost",
     user: "root",
-    password: "Ariadna18",
+    password: "admin",
     database: "netflix",
   });
   connection.connect(); // conecto
@@ -50,6 +52,32 @@ server.get("/movie/:movieId", async (req, res) => {
 const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
+});
+
+
+server.post("/api/signup", async (req, res) => {
+  const { email, password } = req.body;
+
+  const connection = await getDBConnection();
+
+  // encriptar la contraseña
+  // hash tiene 2 parámetros. 1) el string a encriptar; 2) la cantidad de veces que se encripta el string
+  const passwordHashed = await bcrypt.hash(password, 10);
+
+  // insertar en la base de dtos
+  const query =
+    "INSERT INTO user (email, password) VALUES ( ?, ?)";
+  const [newUserResult] = await connection.query(query, [
+    email,
+    passwordHashed,
+  ]);
+
+  connection.end();
+
+  res.status(201).json({
+    success: true,
+    message: newUserResult.id,
+  });
 });
 
 // Para crear un servidor estático

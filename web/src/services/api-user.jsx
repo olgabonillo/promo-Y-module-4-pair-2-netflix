@@ -9,7 +9,7 @@ const sendLoginToApi = (data) => {
     .then((response) => response.json())
     .then(() => {
       // CAMBIA EL CONTENIDO DE ESTE THEN PARA GESTIONAR LA RESPUESTA DEL SERVIDOR Y RETORNAR AL COMPONENTE APP LO QUE NECESITA
-      if (data.email.includes("gmail")) {
+      if (newUserResult.id("")) {
         return {
           success: true,
           userId: "123",
