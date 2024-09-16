@@ -80,6 +80,20 @@ server.post("/api/signup", async (req, res) => {
   });
 });
 
+server.get ("/user/profile:userId", async (req, res) => {
+  const connection = await getDBConnection();
+  const id = req.headers.userId;
+  const sqlQuery = "SELECT * FROM user WHERE idUser = ?";
+  const [result] = await connection.query(sqlQuery, [userId]);
+  connection.end();
+
+  res.status(201).json({
+    success: true,
+    message: result,
+  });
+})
+
+
 // Para crear un servidor estático
 const staticServerPath = "./src/public-react";
 server.use(express.static(staticServerPath));
